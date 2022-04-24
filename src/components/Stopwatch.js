@@ -5,9 +5,9 @@ function Stopwatch() {
   const [time, setTime] = useState(0);
   const timeRef = useRef(null);
 
+  const [enableReset, setEnableReset] = useState(true);
+
   function toggle() {
-    // console.log("Status: ", status);
-    // console.log("Time: ", time);
     if (status === 0) {
       setStatus(1);
       if (localStorage.getItem("UserTime") != null) {
@@ -15,9 +15,10 @@ function Stopwatch() {
       }
       timeRef.current = setInterval(() => {
         setTime((sec) => sec + 1);
-        // localStorage.setItem("UserTime", time);
-        console.log("UserTime", time);
       }, 1000);
+      setEnableReset(true);
+    } else {
+      pause();
     }
   }
 
@@ -27,6 +28,7 @@ function Stopwatch() {
       console.log("Store time in localStorage: ", time);
       localStorage.setItem("UserTime", time);
       clearInterval(timeRef.current);
+      setEnableReset(false);
     }
   }
 
@@ -38,10 +40,19 @@ function Stopwatch() {
 
   return (
     <div>
-      <p>{new Date(time * 1000).toISOString().substring(11, 19)}</p>
+      <h1>{new Date(time * 1000).toISOString().substring(11, 19)}</h1>
       <button onClick={toggle}>Toggle Stopwatch</button>
-      <button onClick={pause}>Pause Stopwatch</button>
-      <button onClick={reset}>Reset</button>
+      {/* <button onClick={pause} disabled={enablePause}>
+        Pause Stopwatch
+      </button> */}
+      <button onClick={reset} disabled={enableReset}>
+        Reset
+      </button>
+      <p>
+        Time is saved only when stopwatch is paused
+        <br />
+        (by pressing the toggle button when the timer is running)
+      </p>
     </div>
   );
 }
